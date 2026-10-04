@@ -9,13 +9,12 @@ except ImportError as e:
 from repo_ingest import (
     DEFAULT_ALLOWED_HOSTS,
     IngestOptions,
-    IngestRequest,
-    IngestResponse,
     IngestResult,
+    RepoIngestError,
     __version__,
     ingest,
-    repo_ingestError,
 )
+from repo_ingest.api_schemas import IngestRequest, IngestResponse
 
 
 def _run(req: IngestRequest) -> IngestResult:
@@ -30,7 +29,7 @@ def _run(req: IngestRequest) -> IngestResult:
         return ingest(
             req.source, options, allow_local=False, allowed_hosts=DEFAULT_ALLOWED_HOSTS
         )
-    except repo_ingestError as e:
+    except RepoIngestError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 

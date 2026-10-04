@@ -5,7 +5,7 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from repo_ingest import DEFAULT_MAX_FILE_SIZE, IngestOptions, ingest, repo_ingestError
+from repo_ingest import DEFAULT_MAX_FILE_SIZE, IngestOptions, RepoIngestError, ingest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -40,7 +40,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     try:
         result = ingest(args.source, options)
-    except repo_ingestError as e:
+    except RepoIngestError as e:
         print(f"error: {e}", file=sys.stderr)
         return 1
 

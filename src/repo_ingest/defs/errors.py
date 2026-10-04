@@ -1,14 +1,14 @@
-class repo_ingestError(Exception):
+class RepoIngestError(Exception):
     """Base class for all expected errors."""
 
 
-class InvalidSourceError(repo_ingestError):
+class InvalidSourceError(RepoIngestError):
     """The source is not a valid/allowed local path or repository URL."""
 
 
-class CloneError(repo_ingestError):
+class CloneError(RepoIngestError):
     """`git` failed (missing binary, auth failure, timeout, bad branch...)."""
 
 
-class SubpathError(repo_ingestError):
+class SubpathError(RepoIngestError):
     """The requested sub-directory does not exist or is not a directory."""

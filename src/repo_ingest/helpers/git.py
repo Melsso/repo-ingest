@@ -1,20 +1,42 @@
 from __future__ import annotations
 
+import base64
 import os
 import subprocess
 import tempfile
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from contextlib import contextmanager
 from dataclasses import replace
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from repo_ingest.defs import CLONE_TIMEOUT_SECONDS, CloneError, Source
 
+_TOKEN_USERNAMES = {
+    "github.com": "x-access-token",
+    "gitlab.com": "oauth2",
+    "bitbucket.org": "x-token-auth",
+}
+
+
+def _auth_env(url: str, token: str) -> tuple[dict[str, str], str]:
+    user = _TOKEN_USERNAMES.get(urlsplit(url).hostname or "", "x-access-token")
+    basic = base64.b64encode(f"{user}:{token}".encode()).decode()
+    env = {
+        "GIT_CONFIG_COUNT": "1",
+        "GIT_CONFIG_KEY_0": "http.extraHeader",
+        "GIT_CONFIG_VALUE_0": f"Authorization: Basic {basic}",
+    }
+    return env, basic
+
 
 def _git(
-    args: Sequence[str], cwd: Path | None = None, secrets: Sequence[str] = ()
+    args: Sequence[str],
+    cwd: Path | None = None,
+    extra_env: Mapping[str, str] | None = None,
+    secrets: Sequence[str] = (),
 ) -> str:
-    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", **(extra_env or {})}
     try:
         proc = subprocess.run(
             ["git", *args],
@@ -22,7 +44,7 @@ def _git(
             env=env,
             capture_output=True,
             text=True,
-            check=True,
+            check=False,
             timeout=CLONE_TIMEOUT_SECONDS,
         )
     except FileNotFoundError as e:
@@ -42,20 +64,27 @@ def _git(
 @contextmanager
 def cloned(source: Source, token: str | None = None) -> Iterator[Source]:
     assert source.url, "cloned() requires a remote source"
+    auth: dict[str, str] = {}
+    secrets: list[str] = []
+    if token:
+        auth, basic = _auth_env(source.url, token)
+        secrets = [token, basic]
+
     with tempfile.TemporaryDirectory(prefix="repo_ingest_") as tmp:
         dest = Path(tmp) / "repo"
-        url = source.url
-        if token:
-            url = url.replace("https://", f"https://{token}@", 1)
         args = ["clone", "--depth=1", "--single-branch"]
         if source.branch:
             args += ["--branch", source.branch]
         if source.subpath:
             args += ["--filter=blob:none", "--sparse"]
-        secrets = [token] if token else []
-        _git([*args, "--", url, str(dest)], secrets=secrets)
+        _git([*args, "--", source.url, str(dest)], extra_env=auth, secrets=secrets)
         if source.subpath:
-            _git(["sparse-checkout", "set", source.subpath], cwd=dest)
+            _git(
+                ["sparse-checkout", "set", source.subpath],
+                cwd=dest,
+                extra_env=auth,
+                secrets=secrets,
+            )
         commit = _git(["rev-parse", "HEAD"], cwd=dest)
         branch = source.branch
         if not branch:

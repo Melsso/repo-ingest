@@ -16,11 +16,10 @@ from repo_ingest.defs.config import (
 from repo_ingest.defs.errors import (
     CloneError,
     InvalidSourceError,
+    RepoIngestError,
     SubpathError,
-    repo_ingestError,
 )
 from repo_ingest.defs.models import IngestOptions, IngestResult, Node, Source
-from repo_ingest.defs.schemas import IngestRequest, IngestResponse
 
 __all__ = [
     "CLONE_TIMEOUT_SECONDS",
@@ -38,12 +37,10 @@ __all__ = [
     "_URL_RE",
     "CloneError",
     "IngestOptions",
-    "IngestRequest",
-    "IngestResponse",
     "IngestResult",
     "InvalidSourceError",
     "Node",
+    "RepoIngestError",
     "Source",
     "SubpathError",
-    "repo_ingestError",
 ]

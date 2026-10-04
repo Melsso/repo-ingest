@@ -2,11 +2,9 @@ from repo_ingest.defs import (
     DEFAULT_ALLOWED_HOSTS,
     DEFAULT_MAX_FILE_SIZE,
     IngestOptions,
-    IngestRequest,
-    IngestResponse,
     IngestResult,
     InvalidSourceError,
-    repo_ingestError,
+    RepoIngestError,
 )
 from repo_ingest.helpers import parse_source
 from repo_ingest.ingest import ingest
@@ -16,11 +14,9 @@ __all__ = [
     "DEFAULT_ALLOWED_HOSTS",
     "DEFAULT_MAX_FILE_SIZE",
     "IngestOptions",
-    "IngestRequest",
-    "IngestResponse",
     "IngestResult",
     "InvalidSourceError",
+    "RepoIngestError",
     "ingest",
     "parse_source",
-    "repo_ingestError",
 ]

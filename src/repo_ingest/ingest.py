@@ -6,6 +6,7 @@ from repo_ingest.defs import (
     DEFAULT_IGNORE_PATTERNS,
     IngestOptions,
     IngestResult,
+    InvalidSourceError,
     Source,
     SubpathError,
 )
@@ -30,6 +31,8 @@ def ingest(
     allowed_hosts: Collection[str] | None = None,
 ) -> IngestResult:
     options = options or IngestOptions()
+    if options.token and any(c.isspace() for c in options.token):
+        raise InvalidSourceError("Token must not contain whitespace")
     parsed = parse_source(
         source, options.branch, allow_local=allow_local, allowed_hosts=allowed_hosts
     )

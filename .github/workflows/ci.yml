@@ -1,0 +1,36 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    name: CI (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install Dependencies
+        run: poetry install --all-extras
+
+      - name: Lint
+        run: poetry run ruff check .
+
+      - name: Typecheck
+        run: poetry run mypy .
+
+      - name: Unit Tests
+        run: poetry run pytest

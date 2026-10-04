@@ -11,7 +11,7 @@ class IngestRequest(BaseModel):
     include: list[str] = []
     exclude: list[str] = []
     max_file_size: int = Field(DEFAULT_MAX_FILE_SIZE, le=DEFAULT_MAX_FILE_SIZE, gt=0)
-    token: str | None = None
+    token: str | None = Field(None, repr=False)
 
 
 class IngestResponse(BaseModel):

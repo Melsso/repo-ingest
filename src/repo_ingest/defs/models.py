@@ -14,7 +14,7 @@ class IngestOptions:
     max_file_size: int = DEFAULT_MAX_FILE_SIZE
     use_default_ignores: bool = True
     use_gitignore: bool = True
-    token: str | None = None
+    token: str | None = field(default=None, repr=False)
 
 
 @dataclass(frozen=True)

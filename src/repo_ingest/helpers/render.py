@@ -12,7 +12,7 @@ def _encoder() -> Any | None:
         import tiktoken
 
         return tiktoken.get_encoding(TOKEN_ENCODING)
-    except (ImportError, ValueError, KeyError):
+    except Exception:  # noqa: BLE001 - network errors, missing cache, bad install
         return None
 
 
