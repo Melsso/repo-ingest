@@ -1,8 +1,3 @@
-import pytest
-
-pytest.importorskip("fastapi")
-pytest.importorskip("httpx")
-
 from fastapi.testclient import TestClient
 
 from repo_ingest.api import app

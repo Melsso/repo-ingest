@@ -24,6 +24,9 @@ Issues = "https://github.com/Melsso/repo-ingest/issues"
 api = ["fastapi (>=0.141.1,<0.142.0)", "uvicorn (>=0.54.0,<0.55.0)"]
 clipboard = ["pyperclip>=1.11,<2.0"]
 
+[project.scripts]
+repo_ingest = "repo_ingest.cli:main"
+
 [tool.poetry]
 packages = [{include = "repo_ingest", from = "src"}]
 
@@ -37,6 +40,3 @@ httpx = "^0.28.1"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-repo_ingest = "repo_ingest.cli:main"

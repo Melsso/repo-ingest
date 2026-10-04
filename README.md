@@ -10,7 +10,7 @@ build output.
 Requires Python 3.11+ and `git` on your `PATH` (for remote repositories).
 
 ```bash
-pipx install "git+https://github.com/Melsso/repo-ingest.git@v0.1.0"
+pip install "repo-ingest[api] @ git+https://github.com/Melsso/repo-ingest.git@v0.1.0"
 
 # with optional extras
 pipx install "repo-ingest[api,clipboard] @ git+https://github.com/Melsso/repo-ingest.git@v0.1.0"

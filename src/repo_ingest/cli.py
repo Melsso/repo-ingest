@@ -52,7 +52,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             import pyperclip
         except ImportError:
             print(
-                "error: --clip needs `pip install repo_ingest[clipboard]`",
+                "error: --clip needs `pip install repo-ingest[clipboard]`",
                 file=sys.stderr,
             )
             return 2

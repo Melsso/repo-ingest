@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 
 import pytest
@@ -32,7 +33,8 @@ def test_token_never_appears_in_argv(monkeypatch):
     with git_mod.cloned(SRC, TOKEN):
         pass
     assert all(TOKEN not in " ".join(cmd) for cmd, _ in calls)
-    assert "http.extraHeader" in calls[0][1]["GIT_CONFIG_KEY_0"]
+    key = calls[0][1]["GIT_CONFIG_KEY_0"]
+    assert key.endswith(".extraHeader") and "github.com" in key
 
 
 def test_token_not_in_repr():
@@ -49,3 +51,31 @@ def test_token_count_falls_back_when_offline(monkeypatch):
     render._encoder.cache_clear()
     assert render.count_tokens("x" * 40) == 10
     render._encoder.cache_clear()
+
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git not installed")
+def test_cloned_real_git_with_subpath(tmp_path):
+    origin = tmp_path / "origin"
+    (origin / "pkg").mkdir(parents=True)
+    (origin / "other").mkdir()
+    (origin / "pkg" / "a.py").write_text("print(1)\n")
+    (origin / "other" / "b.py").write_text("print(2)\n")
+
+    def git(*args):
+        subprocess.run(
+            ["git", "-c", "user.name=t", "-c", "user.email=t@example.com", *args],
+            cwd=origin,
+            check=True,
+            capture_output=True,
+        )
+
+    git("init", "-b", "main")
+    git("add", ".")
+    git("commit", "-m", "init")
+
+    src = Source(repo="origin", url=origin.as_uri(), subpath="pkg")
+    with git_mod.cloned(src) as checked_out:
+        assert checked_out.local_path is not None
+        assert (checked_out.local_path / "pkg" / "a.py").exists()
+        assert not (checked_out.local_path / "other").exists()
+        assert checked_out.commit and checked_out.branch == "main"

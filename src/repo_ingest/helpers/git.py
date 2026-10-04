@@ -20,11 +20,12 @@ _TOKEN_USERNAMES = {
 
 
 def _auth_env(url: str, token: str) -> tuple[dict[str, str], str]:
-    user = _TOKEN_USERNAMES.get(urlsplit(url).hostname or "", "x-access-token")
+    parts = urlsplit(url)
+    user = _TOKEN_USERNAMES.get(parts.hostname or "", "x-access-token")
     basic = base64.b64encode(f"{user}:{token}".encode()).decode()
     env = {
         "GIT_CONFIG_COUNT": "1",
-        "GIT_CONFIG_KEY_0": "http.extraHeader",
+        "GIT_CONFIG_KEY_0": f"http.{parts.scheme}://{parts.hostname}/.extraHeader",
         "GIT_CONFIG_VALUE_0": f"Authorization: Basic {basic}",
     }
     return env, basic
