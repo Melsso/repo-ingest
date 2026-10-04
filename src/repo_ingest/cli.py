@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -22,7 +23,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--no-default-ignores", action="store_true")
     p.add_argument("--no-gitignore", action="store_true")
-    p.add_argument("--token", help="access token for private https repos")
+    p.add_argument(
+        "--token", help="access token (prefer the REPO_INGEST_TOKEN env var)"
+    )
     p.add_argument("--clip", action="store_true", help="copy digest to clipboard")
     return p
 
@@ -36,7 +39,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         max_file_size=args.max_size,
         use_default_ignores=not args.no_default_ignores,
         use_gitignore=not args.no_gitignore,
-        token=args.token,
+        token=args.token or os.environ.get("REPO_INGEST_TOKEN"),
     )
     try:
         result = ingest(args.source, options)

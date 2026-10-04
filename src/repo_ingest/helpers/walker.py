@@ -3,7 +3,8 @@ from __future__ import annotations
 import fnmatch
 from collections.abc import Iterable
 from pathlib import Path
-from types import ModuleType
+
+import pathspec
 
 from repo_ingest.defs import (
     EMPTY_FILE_PLACEHOLDER,
@@ -13,13 +14,6 @@ from repo_ingest.defs import (
     NON_TEXT_PLACEHOLDER,
     Node,
 )
-
-pathspec: ModuleType | None
-
-try:
-    import pathspec
-except ImportError:
-    pathspec = None
 
 
 def _sort_key(node: Node) -> tuple[bool, bool, str]:
@@ -78,13 +72,10 @@ class PathFilter:
     ) -> None:
         self._include = [p for p in include if p.strip()]
         self._exclude = list(exclude)
-        self._spec = None
         lines = list(gitignore_lines)
-        if lines:
-            if pathspec is not None:
-                self._spec = pathspec.PathSpec.from_lines("gitwildmatch", lines)
-            else:
-                self._exclude += [ln for ln in lines if not ln.startswith("!")]
+        self._spec = (
+            pathspec.PathSpec.from_lines("gitwildmatch", lines) if lines else None
+        )
 
     def is_excluded(self, rel: str, name: str, is_dir: bool) -> bool:
         if matches_any(rel, name, self._exclude):

@@ -1,16 +1,24 @@
 [project]
 name = "repo-ingest"
 version = "0.1.0"
-description = ""
+description = "Turn a git repository into a single, token-efficient, LLM-friendly text digest."
 authors = [
     {name = "Mallem Sofiane", email = "melsopv@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["llm", "git", "repository", "digest", "context", "cli"]
+
 dependencies = [
     "tiktoken (>=0.14.0,<0.15.0)",
     "pathspec (>=1.1.1,<2.0.0)",
 ]
+
+[project.urls]
+Homepage = "https://github.com/Melsso/repo-ingest"
+Issues = "https://github.com/Melsso/repo-ingest/issues"
 
 [project.optional-dependencies]
 api = ["fastapi (>=0.141.1,<0.142.0)", "uvicorn (>=0.54.0,<0.55.0)"]

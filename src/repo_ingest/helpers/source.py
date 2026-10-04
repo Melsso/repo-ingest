@@ -40,6 +40,9 @@ def parse_source(
             first, _, subpath = rest.partition("/")
             branch = branch or first
 
+    if branch and branch.startswith("-"):
+        raise InvalidSourceError(f"Invalid branch: {branch!r}")
+
     if ".." in Path(subpath).parts or subpath.startswith("-"):
         raise InvalidSourceError(f"Invalid subpath: {subpath!r}")
 

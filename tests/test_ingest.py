@@ -1,4 +1,6 @@
-from repo_ingest import IngestOptions, ingest
+import pytest
+
+from repo_ingest import IngestOptions, InvalidSourceError, ingest
 
 
 def test_default_behaviour(demo_repo):
@@ -35,3 +37,8 @@ def test_summary_has_token_estimate(demo_repo):
     r = ingest(str(demo_repo))
     assert "Estimated tokens:" in r.summary and r.estimated_tokens > 0
     assert r.text.startswith("Repository:")
+
+
+def test_token_with_whitespace_rejected():
+    with pytest.raises(InvalidSourceError):
+        ingest("o/r", IngestOptions(token="a b"))

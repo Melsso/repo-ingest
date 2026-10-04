@@ -4,7 +4,7 @@ try:
     from fastapi import FastAPI, HTTPException
     from fastapi.responses import PlainTextResponse
 except ImportError as e:
-    raise ImportError("Install the API extra: pip install 'repo_ingest[api]'") from e
+    raise ImportError("Install the API extra: pip install 'repo-ingest'") from e
 
 from repo_ingest import (
     DEFAULT_ALLOWED_HOSTS,

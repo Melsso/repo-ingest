@@ -1,4 +1,4 @@
-from repo_ingest.helpers.git import _git, cloned
+from repo_ingest.helpers.git import cloned
 from repo_ingest.helpers.render import (
     count_tokens,
     format_tokens,
@@ -18,7 +18,6 @@ from repo_ingest.helpers.walker import (
 __all__ = [
     "PathFilter",
     "Walker",
-    "_git",
     "cloned",
     "count_tokens",
     "format_tokens",

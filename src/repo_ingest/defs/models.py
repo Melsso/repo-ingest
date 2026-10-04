@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -40,7 +41,7 @@ class Node:
     file_count: int = 0
     children: list[Node] = field(default_factory=list)
 
-    def iter_files(self):  # type: ignore[no-untyped-def]
+    def iter_files(self) -> Iterator[Node]:
         for child in self.children:
             if child.is_dir:
                 yield from child.iter_files()

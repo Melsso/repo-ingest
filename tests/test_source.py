@@ -48,3 +48,8 @@ def test_subpath_traversal_rejected():
 def test_garbage_rejected():
     with pytest.raises(InvalidSourceError):
         parse_source("not a repo", allow_local=False)
+
+
+def test_branch_starting_with_dash_rejected():
+    with pytest.raises(InvalidSourceError):
+        parse_source("https://github.com/o/r/tree/-x/src", allow_local=False)
